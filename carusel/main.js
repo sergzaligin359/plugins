@@ -37,7 +37,6 @@ const pagination = (data) => {
             //back.setAttribute('disabled', true);
         }
 
-
         start = parseInt(back.dataset.start);
 
         dataCarusel.currentData = [...data.data].splice(start, offset);
@@ -60,11 +59,19 @@ const pagination = (data) => {
 
         start =  parseInt(forward.dataset.start);
 
-
         dataCarusel.currentData = [...data.data].splice(start, offset);
-        console.log('dataCarusel.currentData', dataCarusel.currentData);
+        
         const carusel = document.querySelector('.carusel');
-        carusel.replaceWith(drawCarusel());
+        //carusel.replaceWith(drawCarusel());
+        const div = document.createElement('div');
+        div.className = 'loading';
+        div.innerHTML = '<div>L O A D I N G</div>'
+        carusel.replaceWith(div);
+
+        setTimeout(() => {
+            const carusel = document.querySelector('.loading');
+            carusel.replaceWith(drawCarusel());
+        }, 1000)
     });
 
     
@@ -94,10 +101,6 @@ const drawCarusel = () => {
     return div;
 };
 
-//carusel.appendChild(drawCarusel());
 carusel.replaceWith(drawCarusel());
-
-console.log('carusel', carusel);
-console.log('dataCarusel', dataCarusel);
 
 pagination(dataCarusel);
