@@ -1,4 +1,6 @@
 console.log('data', data);
+console.log('dataImages', dataImages);
+
 const table = document.getElementById('table');
 const tableBody = document.querySelector('#table tbody');
 const tableHead = document.querySelector('#table thead');
