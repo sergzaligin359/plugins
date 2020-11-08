@@ -1,144 +1,62 @@
 console.log('data', data);
-console.log('dataImages', dataImages);
 
+const datatable = document.querySelector('.datatable');
 const table = document.getElementById('table');
-const tableBody = document.querySelector('#table tbody');
-const tableHead = document.querySelector('#table thead');
-const tableFoot = document.querySelector('#table tfoot');
-table.innerHTML = '';
+const pagination = document.querySelector('.pagination');
 
-const dataTable = {
-    thead: ['№', 'Название', 'Калорийность', 'Гликемический индекс'],
-    data: data,
-    currentData: [...data].splice(0, 4),
-    pageItems: 4
+// const offset = (currentPage * limit) - limit;
+
+const settingPagination = {
+    currentPage: 1,
+    limit: 3,
+    offset: 0,
+    total: data.length
 };
 
-const pagination = (data) => {
-    const items = data.data.length;
-    const offset = data.pageItems;
-    const pages = Math.ceil(items / offset);
-    let start = 0;
-    let currentData = [];
+console.log('settingPagination', settingPagination);
 
-    const back = document.querySelector('.back');
-    const forward = document.querySelector('.forward');
-    
-    forward.dataset.start = 0;
-    back.dataset.start = 0;
-    forward.dataset.page = 1;
-    back.dataset.page = 1;
+let currentPage = 1;
+let currentData = null;
+let offset = 0;
+let limit = 3;
+let pages = Math.ceil(settingPagination.total / settingPagination.limit);
 
-    back.addEventListener('click', () => {
+function drawPaginationItems(pages){
+    let html = '';
+    for(let i = 1; i <= pages; i++){
+        html += `<li>${i}</li>`;
+    }
+    return html;
+}
+
+pagination.innerHTML = drawPaginationItems(pages);
+
+const drawCellTd = (item) => {
     
-        back.dataset.start = parseInt(forward.dataset.start) - offset;
-        forward.dataset.start = parseInt(back.dataset.start);
+    let html = '';
+    for(i in item){
+        html += `<td>${item[i]}</td>`;
+    }
+    return html;
+}
+
+datatable.addEventListener('click', (e) => {
+
+    if(e.target.tagName === 'LI'){
         
-        if(parseInt(back.dataset.page) <= 1 || parseInt(back.dataset.start) <= 0){
-            console.warn('PAGE EQ!!!');
-            forward.dataset.start = 0;
-            forward.dataset.page = 1;
-            back.dataset.start = 0;
-            back.dataset.page = 1;
-            //back.setAttribute('disabled', true);
-        }
+        currentPage = Number(e.target.textContent);
+        offset = (currentPage * limit) - limit;
+        currentData = data.slice(offset, offset + limit);
+        
+        console.log('currentData ===>', currentData);
 
+        const td = currentData.map(
+            (item) => `<tr>${ drawCellTd(item) }</tr>`)
+            .join('');
+        
+        table.innerHTML = td;
+    }
 
-        start = parseInt(back.dataset.start);
+});
 
-        dataTable.currentData = [...data.data].splice(start, offset);
-        const tableBody = document.querySelector('#table tbody');
-
-        tableBody.replaceWith(drawTbody());
-    });
-    
-    
-    forward.addEventListener('click', () => {
-
-        forward.dataset.start = parseInt(forward.dataset.start) + offset;
-        forward.dataset.page = parseInt(forward.dataset.page) + 1;
-        back.dataset.page = parseInt(forward.dataset.page);
-
-        if(parseInt(forward.dataset.page) > pages){
-            console.warn('PAGE EQ!!!');
-            forward.dataset.start = 0;
-            forward.dataset.page = 1;
-        }
-
-        start =  parseInt(forward.dataset.start);
-
-
-        dataTable.currentData = [...data.data].splice(start, offset);
-        const tableBody = document.querySelector('#table tbody');
-        //clearTbody();
-        tableBody.replaceWith(drawTbody());
-    });
-
-    
-};
-
-
-const drawThead = () => {
-    const thead = document.createElement('thead');
-    const tr = document.createElement('tr');
-    
-    dataTable.thead.forEach(el => {
-        const td = document.createElement('td');
-        td.innerText = el;
-        tr.appendChild(td);
-    });
-
-    thead.appendChild(tr);
-
-    return thead;
-};
-
-const drawTfoot = () => {
-    const tfoot = document.createElement('tfoot');
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.setAttribute('colspan', 4);
-    td.innerHTML = `
-    <div>
-    <span>${dataTable.pages}</span>-<span>${dataTable.offset}</span> из <span>${dataTable.count}</span>
-    <button class="back">back</button><button class="forward" >Forward</button>
-    </div>
-    `;
-    tr.appendChild(td);
-    tfoot.appendChild(tr);
-
-    return tfoot;
-};
-
-const drawTbody = () => {
-    const tbody = document.createElement('tbody');
-    
-    dataTable.currentData.forEach(el => {
-        const tr = document.createElement('tr');
-
-        for(let prop in el){
-            const td = document.createElement('td');
-            td.innerText = el[prop];
-            tr.appendChild(td);
-           // console.log('prop', el[prop]);
-        }
-        tbody.appendChild(tr);
-    });
-
-    return tbody;
-};
-
-const clearTbody = () => {
-    const tableBody = document.querySelector('#table tbody');
-    tableBody.remove();
-};
-
-const drawTable = () => {
-    table.appendChild(drawThead());
-    table.appendChild(drawTbody());
-    table.appendChild(drawTfoot());
-};
-
-drawTable();
-
-pagination(dataTable);
+// console.log('datatable', datatable);
