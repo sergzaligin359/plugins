@@ -1,3 +1,5 @@
+import { data } from './data.js';
+
 console.log('data', data);
 
 const datatable = document.querySelector('.datatable');
@@ -15,10 +17,10 @@ const settingPagination = {
 
 console.log('settingPagination', settingPagination);
 
-let currentPage = 1;
-let currentData = null;
-let offset = 0;
-let limit = 3;
+let currentPage = settingPagination.currentPage;
+let currentData = [];
+let offset = settingPagination.offset;
+let limit = settingPagination.limit;
 let pages = Math.ceil(settingPagination.total / settingPagination.limit);
 
 function drawPaginationItems(pages){
@@ -31,14 +33,24 @@ function drawPaginationItems(pages){
 
 pagination.innerHTML = drawPaginationItems(pages);
 
-const drawCellTd = (item) => {
+const drawTd = (item) => {
     
     let html = '';
-    for(i in item){
+    for(let i in item){
         html += `<td>${item[i]}</td>`;
     }
     return html;
 }
+
+const drawTr = (currentData) => {
+    
+    let html = currentData.map(
+        (item) => `<tr>${ drawTd(item) }</tr>`)
+        .join('');
+
+    return html;
+}
+
 
 datatable.addEventListener('click', (e) => {
 
@@ -48,13 +60,9 @@ datatable.addEventListener('click', (e) => {
         offset = (currentPage * limit) - limit;
         currentData = data.slice(offset, offset + limit);
         
-        console.log('currentData ===>', currentData);
-
-        const td = currentData.map(
-            (item) => `<tr>${ drawCellTd(item) }</tr>`)
-            .join('');
+        // console.log('currentData ===>', currentData);
         
-        table.innerHTML = td;
+        table.innerHTML = drawTr(currentData);
     }
 
 });
