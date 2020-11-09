@@ -8,6 +8,7 @@ export class Datatable{
 
         this.$el = document.querySelector(this.options.datatableSelector);
         this.$pagination = document.querySelector(this.options.datatableSelector + ' .pagination');
+        this.$table = document.querySelector(this.options.datatableSelector + ' table');
 
         this.currentPage = this.options.currentPage;
         this.offset = this.options.offset;
@@ -24,16 +25,34 @@ export class Datatable{
         return html;
     }
 
+    sliceArray(){
+        this.offset = (this.currentPage * this.limit) - this.limit;
+        this.currentData = this.data.slice(this.offset, this.offset + this.limit);
+        console.log('sliceArray() currentData ===>', this.currentData);
+    }
+
+    isClickPrevButton(e){
+        return e.target.className === 'pagination-prev';
+    }
+
+    isClickNextButton(e){
+        return e.target.className === 'pagination-next';
+    }
+
+    isClickPaginationItemButton(e){
+        return e.target.className === 'pagination-item';
+    }
+
     render(){
         this.$pagination.innerHTML = this.drawPaginationItems(this.pages);
 
         this.$pagination.addEventListener('click', (e) => {
-            //console.log('pagination click ===>');
-            if(e.target.className === 'pagination-item'){
+            
+            if(this.isClickPaginationItemButton(e)){
                 this.currentPage = Number(e.target.textContent);
             }
         
-            if(e.target.className === 'pagination-prev'){
+            if(this.isClickPrevButton(e)){
                 if(this.currentPage > 1) {
                     this.currentPage -= 1;
                 }else{
@@ -41,7 +60,7 @@ export class Datatable{
                 }
             }
         
-            if(e.target.className === 'pagination-next'){
+            if(this.isClickNextButton(e)){
                 if(this.currentPage < this.pages) {
                     this.currentPage += 1;
                 }else{
@@ -49,10 +68,9 @@ export class Datatable{
                 }
             }
         
-            this.offset = (this.currentPage * this.limit) - this.limit;
-            this.currentData = this.data.slice(this.offset, this.offset + this.limit);
-            console.log('currentData ===>', this.currentData);
-            // table.innerHTML = drawTr(currentData);
+            this.sliceArray();
+
+            // this.table.innerHTML = drawTr(currentData);
         
         });
     }
