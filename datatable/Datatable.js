@@ -5,16 +5,25 @@ export class Datatable{
         this.columns = columns;
         this.titles = titles;
         this.currentData = [];
+        this.searchData = [];
         this.options = options;
+
+        this.mode = false;
 
         this.$el = document.querySelector(this.options.datatableSelector);
         this.$pagination = document.querySelector(this.options.datatableSelector + ' .pagination');
         this.$table = document.querySelector(this.options.datatableSelector + ' table');
+        this.$search = document.querySelector(this.options.datatableSelector + ' #search');
 
         this.currentPage = this.options.currentPage;
         this.offset = this.options.offset;
         this.limit = this.options.limit;
         this.pages = Math.ceil(this.options.total / this.options.limit);
+    }
+
+    sliceArraySearch(){
+        this.offset = (this.currentPage * this.limit) - this.limit;
+        this.currentData = this.data.slice(this.offset, this.offset + this.limit);
     }
 
     drawTh(titles){
@@ -24,19 +33,17 @@ export class Datatable{
         return html;
     }
 
-    drawTd(){
-        return this.currentData.map(item => `<tr><td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td><tr>`).join('');
+    drawTd(data){
+        return data.map(item => `<tr><td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td><tr>`).join('');
     }
 
     drawTable(){
-        // console.log('th', this.drawTh(this.titles));
-        // this.$table.append(this.drawTh(this.titles));
         this.$table.innerHTML = '';
         const thead = document.createElement('thead');
         thead.innerHTML = this.drawTh(this.titles);
         this.$table.append(thead);
         const tbody = document.createElement('tbody');
-        tbody.innerHTML = this.drawTd();
+        tbody.innerHTML = this.drawTd(this.currentData);
         this.$table.append(tbody);
     }
 
@@ -49,9 +56,9 @@ export class Datatable{
         return html;
     }
 
-    sliceArray(){
+    sliceArray(data){
         this.offset = (this.currentPage * this.limit) - this.limit;
-        this.currentData = this.data.slice(this.offset, this.offset + this.limit);
+        this.currentData = data.slice(this.offset, this.offset + this.limit);
         console.log('sliceArray() currentData ===>', this.currentData);
     }
 
@@ -68,12 +75,14 @@ export class Datatable{
     }
 
     render(){
-        this.sliceArray();
+
+        this.sliceArray(this.data);
+
         this.$pagination.innerHTML = this.drawPagination(this.pages);
-        // this.$table = this.drawTable();
+        
         this.drawTable();
 
-        this.$pagination.addEventListener('click', (e) => {
+        const handlerClick = (e) => {
             
             if(this.isClickPaginationItemButton(e)){
                 this.currentPage = Number(e.target.textContent);
@@ -95,10 +104,40 @@ export class Datatable{
                 }
             }
         
-            this.sliceArray();
-            this.drawTable()
-            // this.table.innerHTML = drawTr(currentData);
+            this.sliceArray(this.searchData || this.currentData || this.data);
+            this.drawTable();
         
-        });
+        }
+
+        const handlerSearch = (e) => {
+
+            console.log('Search text', e.target.value);
+            const searchField = e.target.value;
+            const exp = new RegExp(searchField, 'i');
+
+            this.searchData = this.data.filter(el => {
+
+                if (searchField != '' && searchField != ' ' && el.title.search(exp) != -1) {
+                    return el;
+                } else if(searchField == ''){
+                    return el;
+                }
+                
+            });
+
+            this.pages = Math.ceil(this.searchData.length / this.options.limit);
+            this.$pagination.innerHTML = this.drawPagination(this.pages);
+            this.sliceArray(this.searchData);
+            // this.sliceArray();
+            console.log('new this.searchData ===>', this.searchData);
+            this.drawTable();
+        }
+
+        this.$pagination.addEventListener('click', handlerClick);
+
+        this.$search.addEventListener('input', handlerSearch);
+
+        // this.$pagination.removeEventListener('click', handlerClick, false);
     }
+
 }
