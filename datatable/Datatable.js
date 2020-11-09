@@ -1,8 +1,9 @@
 export class Datatable{
 
-    constructor(data, columns=[], options={}){
+    constructor(data, columns=[], titles, options={}){
         this.data = data;
         this.columns = columns;
+        this.titles = titles;
         this.currentData = [];
         this.options = options;
 
@@ -16,7 +17,30 @@ export class Datatable{
         this.pages = Math.ceil(this.options.total / this.options.limit);
     }
 
-    drawPaginationItems(pages){
+    drawTh(titles){
+        let html = `<tr>`;
+        html += titles.map(title => `<th>${ title }</th>`).join('');
+        html += '</tr>';
+        return html;
+    }
+
+    drawTd(){
+        return this.currentData.map(item => `<tr><td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td><tr>`).join('');
+    }
+
+    drawTable(){
+        // console.log('th', this.drawTh(this.titles));
+        // this.$table.append(this.drawTh(this.titles));
+        this.$table.innerHTML = '';
+        const thead = document.createElement('thead');
+        thead.innerHTML = this.drawTh(this.titles);
+        this.$table.append(thead);
+        const tbody = document.createElement('tbody');
+        tbody.innerHTML = this.drawTd();
+        this.$table.append(tbody);
+    }
+
+    drawPagination(pages){
         let html = '<li class="pagination-prev">Назад</li>';
         for(let i = 1; i <= pages; i++){
             html += `<li class="pagination-item">${i}</li>`;
@@ -44,7 +68,10 @@ export class Datatable{
     }
 
     render(){
-        this.$pagination.innerHTML = this.drawPaginationItems(this.pages);
+        this.sliceArray();
+        this.$pagination.innerHTML = this.drawPagination(this.pages);
+        // this.$table = this.drawTable();
+        this.drawTable();
 
         this.$pagination.addEventListener('click', (e) => {
             
@@ -69,7 +96,7 @@ export class Datatable{
             }
         
             this.sliceArray();
-
+            this.drawTable()
             // this.table.innerHTML = drawTr(currentData);
         
         });

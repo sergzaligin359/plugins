@@ -8,7 +8,14 @@ const columns = [
     'gi'
 ];
 
-const datatable = new Datatable(data, columns, {
+const titles = [
+    '№',
+    'Название',
+    'Калории',
+    'Гликемический индекс'
+];
+
+const datatable = new Datatable(data, columns, titles, {
     datatableSelector: '.datatable',
     currentPage: 1,
     limit: 3,
