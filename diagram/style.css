@@ -6,6 +6,10 @@
     outline: 1px solid #000;
   }
 
+  svg.chart{
+      margin: 0 auto;
+  }
+
   .unit {
     fill: none;
     stroke-width: 10;
