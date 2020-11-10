@@ -2,10 +2,11 @@ export class Datatable{
 
     constructor(data, columns=[], titles, options={}){
         this.data = data;
+        this.total = data.length;
         this.columns = columns;
         this.titles = titles;
         this.currentData = [];
-        this.searchData = [];
+        this.searchData = data;
         this.options = options;
 
         this.mode = false;
@@ -53,13 +54,14 @@ export class Datatable{
             html += `<li class="pagination-item">${i}</li>`;
         }
         html += '<li class="pagination-next">Вперед</li>';
+        // html += `<span> ${this.offset} из ${ this.total } </span>`;
         return html;
     }
 
     sliceArray(data){
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = data.slice(this.offset, this.offset + this.limit);
-        console.log('sliceArray() currentData ===>', this.currentData);
+        // console.log('sliceArray() currentData ===>', this.currentData);
     }
 
     isClickPrevButton(e){
@@ -76,7 +78,7 @@ export class Datatable{
 
     render(){
 
-        this.sliceArray(this.data);
+        this.sliceArray(this.searchData);
 
         this.$pagination.innerHTML = this.drawPagination(this.pages);
         
@@ -104,7 +106,7 @@ export class Datatable{
                 }
             }
         
-            this.sliceArray(this.searchData || this.currentData || this.data);
+            this.sliceArray(this.searchData);
             this.drawTable();
         
         }
