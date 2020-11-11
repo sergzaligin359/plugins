@@ -5,14 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carusel</title>
     <style>
-        .carusel-wrapper{
-            /* display: grid;
-            grid-template-rows: 1fr 1fr;
-            grid-template-columns: 1fr;
-            gap: 10px; */
-        }
         .loading{
-            display: grid;
+            display: flex;
             grid-template-rows: 150px;
             grid-template-columns: 12fr;
             gap: 10px;
@@ -82,12 +76,11 @@
                 <figcaption>Черная смородина: <a href="http://www.flickr.com/photos/rclark/">подробнее</a></figcaption>
             </figure>
         </div>
-        <div class="carusel-controls">
-            <button class="forward">Next</button>
-            <button class="back">Back</button>
+        <div class="pagination">
+            <button class="next">Next</button>
+            <button class="prev">Back</button>
         </div>
     </div>
-    <script src="dataImages.js"></script>
-    <script src="main.js"></script>
+    <script src="main.js" type="module"></script>
 </body>
 </html>

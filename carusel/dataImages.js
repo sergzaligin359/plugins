@@ -1,4 +1,4 @@
-const dataImages = [
+export const dataImages = [
     {
         src: 'images/1.jpg',
         title: 'Title1'
