@@ -4,7 +4,7 @@ export class Pie {
         this.buttons = document.querySelector('.buttons');
         this.pie = document.querySelector('.pie'),
         this.activeClass = 'active';
-        this.total = 158; 
+        this.total = 100; 
 
     }
 

@@ -9,8 +9,8 @@
   circle {
     fill: #ddd;
     stroke: #0074d9;
-    stroke-width: 50;
-    stroke-dasharray: 0 158;
+    stroke-width: 32;
+    stroke-dasharray: 0 100;
     transition: stroke-dasharray .3s ease;
   }
   svg {
