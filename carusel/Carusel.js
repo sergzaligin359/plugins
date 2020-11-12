@@ -78,9 +78,6 @@ export class Carusel {
     }
     render(){
         //document.body.clientWidth > 640 ? 4 : 2
-
-
-
         this.$wrapper.innerHTML = '';
         this.sliceArray(this.data);
 
