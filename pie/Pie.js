@@ -4,6 +4,7 @@ export class Pie {
         this.buttons = document.querySelector('.buttons');
         this.pie = document.querySelector('.pie'),
         this.activeClass = 'active';
+        // need see radius
         this.total = 100; 
 
     }
