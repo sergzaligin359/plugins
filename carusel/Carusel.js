@@ -77,18 +77,21 @@ export class Carusel {
         this.$pagination.innerHTML = this.drawNavigation();
 
         this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+        this.$cnt = document.querySelector(this.options.selector + ' .cnt');
 
         const handlerClick = (e) => {
+           
+            console.log('click currentPage  ===>', this.offset + this.limit);
             this.$cnt = document.querySelector(this.options.selector + ' .cnt');
-
-            console.log('click ===>', this.currentPage, this.offset);
-
+            
             if(this.isClickPrevButton(e)){
                 
                 if(this.currentPage > 1) {
                     this.currentPage -= 1;
+                    this.$cnt.textContent = this.$cnt.textContent - this.data.slice(this.offset, this.offset + this.limit).length;
                 }else{
                     this.currentPage = this.pages;
+                    this.$cnt.textContent = +this.total;
                 }
             }
         
@@ -96,18 +99,11 @@ export class Carusel {
                 
                 if(this.currentPage < this.pages) {
                     this.currentPage += 1;
+                    this.$cnt.textContent = +this.$cnt.textContent + this.limit < this.total ? +this.$cnt.textContent + this.limit : this.total;
                 }else{
                     this.currentPage = 1;
+                    this.$cnt.textContent = +this.limit;
                 }
-            }
-
-            this.offset = (this.currentPage * this.limit) + this.limit;
-
-            if(this.offset < this.total){
-                this.$cnt.textContent = this.offset;
-            }else if(this.offset > this.total){
-                this.$cnt.textContent = this.total;
-  
             }
 
             this.$content = document.querySelector(this.options.selector + ' .carusel');
