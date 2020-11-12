@@ -8,7 +8,11 @@ export class Carusel {
         this.options = options;
         this.currentPage = this.options.currentPage;
         this.offset = this.options.offset;
+
+        //console.log('window.screen.width ===>', document.body.clientWidth);
+        this.options.limit = document.body.clientWidth > 640 ? options.limit : 2;
         this.limit = this.options.limit;
+
         this.pages = Math.ceil(this.options.total / this.options.limit);
 
         this.$wrapper = document.querySelector(this.options.selector);
@@ -33,7 +37,7 @@ export class Carusel {
 
     htmlContent(data){
         let html = '';
-        const f = data.map(el => {
+        html += data.map(el => {
             return `
             <figure>
                 <img src="/${el.src}" alt="1">
@@ -41,7 +45,6 @@ export class Carusel {
             </figure>
             `
         }).join('');
-        html += f;
         return html;
     }
 
@@ -68,8 +71,16 @@ export class Carusel {
         this.$content.innerHTML = '';
         this.drawContent();
     }
-
+    prepare(){
+        if(document.body.clientWidth < 640){
+            this.limit = 2;
+        }
+    }
     render(){
+        //document.body.clientWidth > 640 ? 4 : 2
+
+
+
         this.$wrapper.innerHTML = '';
         this.sliceArray(this.data);
 
@@ -113,7 +124,7 @@ export class Carusel {
             this.$wrapper.append(this.$pagination);
         
         }
-
+        
         this.$pagination.addEventListener('click', handlerClick);
     }
 }
