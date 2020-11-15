@@ -37,6 +37,20 @@ export class Datatable{
         console.log('Sorting process...', array);
     }
 
+
+    sortFieldA(array) {
+        array.sort(function(a, b) {
+            if (a.gi < b.gi) {
+                return 1;
+              }
+              if (a.gi > b.gi) {
+                return -1;
+              }
+              return 0;
+          })
+        console.log('Sorting process...', array);
+    }
+
     sliceArraySearch(){
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = this.data.slice(this.offset, this.offset + this.limit);
@@ -44,7 +58,9 @@ export class Datatable{
 
     drawTh(titles, columns, sortable){
         let html = `<tr>`;
-        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'} data-sort=${columns[index]}>Sort</span></th>`).join('');
+        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'} data-sort=${columns[index]}>
+            <span class="sort-up">Up</span><span class="sort-down">Down</span>
+        </span></th>`).join('');
         html += '</tr>';
         return html;
     }
@@ -139,9 +155,10 @@ export class Datatable{
         }
 
         const handleSort = (e) => {
-            console.log('SORT', e.target.dataset.sort);
-            if(this.isClickSortButton(e)){
-                console.log('SORT', e.target.dataset.sort);
+            //console.log('SORT', e.target.className);
+
+            if(e.target.className === 'sort-up'){
+                console.log('SORT', e.target.className);
                // this.sortField(this.data);
                 if(this.searchData.length){
                     this.sortField(this.searchData);
@@ -150,6 +167,22 @@ export class Datatable{
                     
                 }else{
                     this.sortField(this.data);
+                    this.sliceArray(this.data);
+                }
+                
+                this.drawTable();
+            }
+
+            if(e.target.className === 'sort-down'){
+                console.log('SORT', e.target.className);
+               // this.sortField(this.data);
+                if(this.searchData.length){
+                    this.sortFieldA(this.searchData);
+                    this.sliceArray(this.searchData);
+                    
+                    
+                }else{
+                    this.sortFieldA(this.data);
                     this.sliceArray(this.data);
                 }
                 
