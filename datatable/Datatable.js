@@ -139,8 +139,17 @@ export class Datatable{
         const handleSort = (e) => {
             if(this.isClickSortButton(e)){
                 console.log('SORT', e.target.dataset.sort);
-                this.sortField(this.data);
-                this.sliceArray(this.data);
+               // this.sortField(this.data);
+                if(this.searchData.length){
+                    this.sortField(this.searchData);
+                    this.sliceArray(this.searchData);
+                    
+                    
+                }else{
+                    this.sortField(this.data);
+                    this.sliceArray(this.data);
+                }
+                
                 this.drawTable();
             }
         }
