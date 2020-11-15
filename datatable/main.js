@@ -9,7 +9,8 @@ const columns = [
 ];
 
 const sortable = [
-    'gi'
+    'gi',
+    'cal',
 ];
 
 const titles = [

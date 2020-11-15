@@ -24,12 +24,12 @@ export class Datatable{
         this.pages = Math.ceil(this.options.total / this.options.limit);
     }
 
-    sortField(array) {
+    sortField(array, field) {
         array.sort(function(a, b) {
-            if (a.gi > b.gi) {
+            if (a[field] > b[field]) {
                 return 1;
               }
-              if (a.gi < b.gi) {
+              if (a[field] < b[field]) {
                 return -1;
               }
               return 0;
@@ -38,12 +38,12 @@ export class Datatable{
     }
 
 
-    sortFieldA(array) {
+    sortFieldA(array, field) {
         array.sort(function(a, b) {
-            if (a.gi < b.gi) {
+            if (a[field] < b[field]) {
                 return 1;
               }
-              if (a.gi > b.gi) {
+              if (a[field] > b[field]) {
                 return -1;
               }
               return 0;
@@ -58,8 +58,8 @@ export class Datatable{
 
     drawTh(titles, columns, sortable){
         let html = `<tr>`;
-        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'} data-sort=${columns[index]}>
-            <span class="sort-up">Up</span><span class="sort-down">Down</span>
+        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'}>
+            <span class="sort-up" data-sort=${columns[index]}>Up</span><span class="sort-down" data-sort=${columns[index]}>Down</span>
         </span></th>`).join('');
         html += '</tr>';
         return html;
@@ -156,17 +156,17 @@ export class Datatable{
 
         const handleSort = (e) => {
             //console.log('SORT', e.target.className);
-
+            console.log('SORT', e.target.dataset.sort);
             if(e.target.className === 'sort-up'){
-                console.log('SORT', e.target.className);
+                console.log('SORT', e.target.dataset.sort);
                // this.sortField(this.data);
                 if(this.searchData.length){
-                    this.sortField(this.searchData);
+                    this.sortField(this.searchData, e.target.dataset.sort);
                     this.sliceArray(this.searchData);
                     
                     
                 }else{
-                    this.sortField(this.data);
+                    this.sortField(this.data, e.target.dataset.sort);
                     this.sliceArray(this.data);
                 }
                 
@@ -177,12 +177,12 @@ export class Datatable{
                 console.log('SORT', e.target.className);
                // this.sortField(this.data);
                 if(this.searchData.length){
-                    this.sortFieldA(this.searchData);
+                    this.sortFieldA(this.searchData, e.target.dataset.sort);
                     this.sliceArray(this.searchData);
                     
                     
                 }else{
-                    this.sortFieldA(this.data);
+                    this.sortFieldA(this.data, e.target.dataset.sort);
                     this.sliceArray(this.data);
                 }
                 
