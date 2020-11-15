@@ -22,14 +22,27 @@ export class Datatable{
         this.pages = Math.ceil(this.options.total / this.options.limit);
     }
 
+    sortField(array) {
+        array.sort(function(a, b) {
+            if (a.gi > b.gi) {
+                return 1;
+              }
+              if (a.gi < b.gi) {
+                return -1;
+              }
+              return 0;
+          })
+        console.log('Sorting process...', array);
+    }
+
     sliceArraySearch(){
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = this.data.slice(this.offset, this.offset + this.limit);
     }
 
-    drawTh(titles){
+    drawTh(titles, columns){
         let html = `<tr>`;
-        html += titles.map(title => `<th>${ title }</th>`).join('');
+        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sort=${columns[index]}>Sort</span></th>`).join('');
         html += '</tr>';
         return html;
     }
@@ -41,7 +54,7 @@ export class Datatable{
     drawTable(){
         this.$table.innerHTML = '';
         const thead = document.createElement('thead');
-        thead.innerHTML = this.drawTh(this.titles);
+        thead.innerHTML = this.drawTh(this.titles, this.columns);
         this.$table.append(thead);
         const tbody = document.createElement('tbody');
         tbody.innerHTML = this.drawTd(this.currentData);
@@ -62,18 +75,6 @@ export class Datatable{
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = data.slice(this.offset, this.offset + this.limit);
         // console.log('sliceArray() currentData ===>', this.currentData);
-    }
-
-    isClickPrevButton(e){
-        return e.target.className === 'pagination-prev';
-    }
-
-    isClickNextButton(e){
-        return e.target.className === 'pagination-next';
-    }
-
-    isClickPaginationItemButton(e){
-        return e.target.className === 'pagination-item';
     }
 
     render(){
@@ -135,11 +136,38 @@ export class Datatable{
             this.drawTable();
         }
 
+        const handleSort = (e) => {
+            if(this.isClickSortButton(e)){
+                console.log('SORT', e.target.dataset.sort);
+                this.sortField(this.data);
+                this.sliceArray(this.data);
+                this.drawTable();
+            }
+        }
+
+        this.$table.addEventListener('click', handleSort);
+
         this.$pagination.addEventListener('click', handlerClick);
 
         this.$search.addEventListener('input', handlerSearch);
 
         // this.$pagination.removeEventListener('click', handlerClick, false);
+    }
+
+    isClickPrevButton(e){
+        return e.target.className === 'pagination-prev';
+    }
+
+    isClickNextButton(e){
+        return e.target.className === 'pagination-next';
+    }
+
+    isClickSortButton(e){
+        return e.target.className === 'sort';
+    }
+
+    isClickPaginationItemButton(e){
+        return e.target.className === 'pagination-item';
     }
 
 }
