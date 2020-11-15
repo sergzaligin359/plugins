@@ -1,10 +1,12 @@
 export class Datatable{
 
-    constructor(data, columns=[], titles, options={}){
+    constructor(data, columns=[], titles, sortable=[], options={}){
         this.data = data;
         this.total = data.length;
         this.columns = columns;
         this.titles = titles;
+        this.sortable = sortable;
+
         this.currentData = [];
         this.searchData = data;
         this.options = options;
@@ -40,9 +42,9 @@ export class Datatable{
         this.currentData = this.data.slice(this.offset, this.offset + this.limit);
     }
 
-    drawTh(titles, columns){
+    drawTh(titles, columns, sortable){
         let html = `<tr>`;
-        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sort=${columns[index]}>Sort</span></th>`).join('');
+        html += titles.map((title, index) => `<th>${ title }<span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'} data-sort=${columns[index]}>Sort</span></th>`).join('');
         html += '</tr>';
         return html;
     }
@@ -54,7 +56,7 @@ export class Datatable{
     drawTable(){
         this.$table.innerHTML = '';
         const thead = document.createElement('thead');
-        thead.innerHTML = this.drawTh(this.titles, this.columns);
+        thead.innerHTML = this.drawTh(this.titles, this.columns, this.sortable);
         this.$table.append(thead);
         const tbody = document.createElement('tbody');
         tbody.innerHTML = this.drawTd(this.currentData);
@@ -137,6 +139,7 @@ export class Datatable{
         }
 
         const handleSort = (e) => {
+            console.log('SORT', e.target.dataset.sort);
             if(this.isClickSortButton(e)){
                 console.log('SORT', e.target.dataset.sort);
                // this.sortField(this.data);
@@ -160,7 +163,6 @@ export class Datatable{
 
         this.$search.addEventListener('input', handlerSearch);
 
-        // this.$pagination.removeEventListener('click', handlerClick, false);
     }
 
     isClickPrevButton(e){

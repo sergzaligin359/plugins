@@ -8,6 +8,10 @@ const columns = [
     'gi'
 ];
 
+const sortable = [
+    'gi'
+];
+
 const titles = [
     '№',
     'Название',
@@ -15,7 +19,7 @@ const titles = [
     'Гликемический индекс'
 ];
 
-const datatable = new Datatable(data, columns, titles, {
+const datatable = new Datatable(data, columns, titles, sortable, {
     datatableSelector: '.datatable',
     currentPage: 1,
     limit: 3,
