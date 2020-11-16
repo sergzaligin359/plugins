@@ -5,7 +5,8 @@ const columns = [
     'id',
     'title',
     'cal',
-    'gi'
+    'gi',
+    'actions'
 ];
 
 const sortable = [
@@ -17,7 +18,8 @@ const titles = [
     '№',
     'Название',
     'Калории',
-    'Гликемический индекс'
+    'Гликемический индекс',
+    'Управление'
 ];
 
 const datatable = new Datatable(data, columns, titles, sortable, {

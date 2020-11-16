@@ -34,7 +34,6 @@ export class Datatable{
               }
               return 0;
           })
-        console.log('Sorting process...', array);
     }
 
 
@@ -48,7 +47,6 @@ export class Datatable{
               }
               return 0;
           })
-        console.log('Sorting process...', array);
     }
 
     sliceArraySearch(){
@@ -66,7 +64,21 @@ export class Datatable{
     }
 
     drawTd(data){
-        return data.map(item => `<tr><td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td><tr>`).join('');
+        if(this.columns.includes('actions')){
+            return data.map(item => `<tr>
+                <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
+                <td>
+                <div class="action-list">
+                    <span class="action-delete" data-actionId=${ item.id }>Del</span>
+                    <span class="action-update" data-actionId=${ item.id }>Update</span>
+                </div>
+                </td>
+            <tr>`).join('');
+        }else{
+            return data.map(item => `<tr>
+                <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
+            <tr>`).join('');
+        }
     }
 
     drawTable(){
@@ -85,14 +97,12 @@ export class Datatable{
             html += `<li class="pagination-item">${i}</li>`;
         }
         html += '<li class="pagination-next">Вперед</li>';
-        // html += `<span> ${this.offset} из ${ this.total } </span>`;
         return html;
     }
 
     sliceArray(data){
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = data.slice(this.offset, this.offset + this.limit);
-        // console.log('sliceArray() currentData ===>', this.currentData);
     }
 
     render(){
@@ -102,6 +112,22 @@ export class Datatable{
         this.$pagination.innerHTML = this.drawPagination(this.pages);
         
         this.drawTable();
+
+        const handleAction = (e) => {
+            
+            if(e.target.className === 'action-delete'){
+                let id = e.target.dataset.actionid;
+                this.data = this.data.filter(el => el.id != id);
+                this.currentData = this.currentData.filter(el => el.id != id);
+                this.sliceArray(this.data);
+                this.drawTable();
+            }
+            
+        }
+
+        const actions = document.querySelectorAll('.action-list');
+
+        this.$table.addEventListener('click', handleAction);
 
         const handlerClick = (e) => {
             
@@ -132,7 +158,6 @@ export class Datatable{
 
         const handlerSearch = (e) => {
 
-            console.log('Search text', e.target.value);
             const searchField = e.target.value;
             const exp = new RegExp(searchField, 'i');
 
@@ -149,17 +174,13 @@ export class Datatable{
             this.pages = Math.ceil(this.searchData.length / this.options.limit);
             this.$pagination.innerHTML = this.drawPagination(this.pages);
             this.sliceArray(this.searchData);
-            // this.sliceArray();
-            console.log('new this.searchData ===>', this.searchData);
             this.drawTable();
         }
 
         const handleSort = (e) => {
-            //console.log('SORT', e.target.className);
-            console.log('SORT', e.target.dataset.sort);
+            
             if(e.target.className === 'sort-up'){
-                console.log('SORT', e.target.dataset.sort);
-               // this.sortField(this.data);
+                
                 if(this.searchData.length){
                     this.sortField(this.searchData, e.target.dataset.sort);
                     this.sliceArray(this.searchData);
@@ -174,8 +195,7 @@ export class Datatable{
             }
 
             if(e.target.className === 'sort-down'){
-                console.log('SORT', e.target.className);
-               // this.sortField(this.data);
+               
                 if(this.searchData.length){
                     this.sortFieldA(this.searchData, e.target.dataset.sort);
                     this.sliceArray(this.searchData);
