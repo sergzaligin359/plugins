@@ -20,7 +20,7 @@ const columns2 = [
 
 const carusel = new Carusel(dataImages, columns, {
     selector: '.less-calory',
-    limit: 4,
+    limit: 3,
     emptyData: '<div>Элементов не найдено!</div>'
 });
 
@@ -28,7 +28,7 @@ carusel.render();
 
 const carusel2 = new Carusel(dataImages2, columns2, {
     selector: '.more-calory',
-    limit: 4,
+    limit: 3,
     emptyData: '<div>Элементов не найдено!</div>'
 });
 

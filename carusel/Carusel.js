@@ -61,7 +61,7 @@ export class Carusel {
                         this.$out.textContent = +this.$out.textContent + this.limit < this.total ? +this.$out.textContent + this.limit : this.total;
                     }else{
                         this.currentPage = 1;
-                        this.$out.textContent = +this.limit;
+                        this.$out.textContent = +this.limit > this.total ? this.total : this.limit;
                     }
                 }
     
