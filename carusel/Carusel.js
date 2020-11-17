@@ -1,24 +1,84 @@
 export class Carusel {
 
-    constructor(data, options={}){
-        this.data = data;
-        this.currentData = [];
-        this.total = options.total;
-
+    constructor(data, columns, options={}){
         this.options = options;
-        this.currentPage = this.options.currentPage;
-        this.offset = this.options.offset;
+
+        this.data = data;
+        this.columns = columns;
+        this.emptyData = options.emptyData;
+        this.currentData = [];
+        this.total = data.length;
+
+        this.currentPage = 1;
+        this.offset = 0;
+
+        this.offset = options.offset;
+        this.limit = document.body.clientWidth > 640 ? options.limit : 2;
+
+        // this.outCnt = (this.offset + this.limit) < this.total ? (this.offset + this.limit) : this.total;
 
         //console.log('window.screen.width ===>', document.body.clientWidth);
-        this.options.limit = document.body.clientWidth > 640 ? options.limit : 2;
-        this.limit = this.options.limit;
 
-        this.pages = Math.ceil(this.options.total / this.options.limit);
+        this.pages = Math.ceil(this.total / options.limit);
 
-        this.$wrapper = document.querySelector(this.options.selector);
-        this.$content = document.querySelector(this.options.selector + ' .carusel');
-        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+        this.$out = null;
+        this.$pagination = null;
 
+        this.$wrapper = document.querySelector(options.selector);
+
+        this.$wrapper.innerHTML = '';
+    }
+
+    init(){
+        this.$wrapper.style.display = 'block';
+        this.$wrapper.innerHTML = '<div>LOADING...</div>';
+
+        setTimeout(() => {
+            this.$wrapper.innerHTML = '';
+            this.sliceArray(this.data);
+            this.draw();
+            
+            const handlerClick = (e) => {
+           
+                // console.log('click currentPage  ===>', this.offset + this.limit);
+                // this.$cnt = document.querySelector(this.options.selector + ' .cnt');
+                
+                if(this.isClickPrevButton(e)){
+                    
+                    if(this.currentPage > 1) {
+                        this.currentPage -= 1;
+                        this.$out.textContent = this.$out.textContent - this.data.slice(this.offset, this.offset + this.limit).length;
+                    }else{
+                        this.currentPage = this.pages;
+                        this.$out.textContent = +this.total;
+                    }
+                }
+            
+                if(this.isClickNextButton(e)){
+                    
+                    if(this.currentPage < this.pages) {
+                        this.currentPage += 1;
+                        this.$out.textContent = +this.$out.textContent + this.limit < this.total ? +this.$out.textContent + this.limit : this.total;
+                    }else{
+                        this.currentPage = 1;
+                        this.$out.textContent = +this.limit;
+                    }
+                }
+    
+                this.sliceArray(this.data);
+                this.$content = document.querySelector(this.options.selector + ' .carusel');
+                this.$content.innerHTML = this.htmlContent(this.currentData);
+                
+                //this.drawContent();
+            }
+
+            this.$pagination.addEventListener('click', handlerClick);
+        }, 300);
+    }
+
+    sliceArray(data){
+        this.offset = (this.currentPage * this.limit) - this.limit;
+        this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
     isClickPrevButton(e){
@@ -32,16 +92,15 @@ export class Carusel {
     sliceArray(data){
         this.offset = (this.currentPage * this.limit) - this.limit;
         this.currentData = data.slice(this.offset, this.offset + this.limit);
-        // console.log('sliceArray() currentData ===>', this.currentData);
     }
 
     htmlContent(data){
         let html = '';
-        html += data.map(el => {
+        html += data.map((el) => {
             return `
             <figure>
-                <img src="/${el.src}" alt="1">
-                <figcaption>${el.title}: <a href="http://www.flickr.com/photos/rclark/">подробнее</a></figcaption>
+                <img src="/${el[this.columns[0]]}" alt="1">
+                <figcaption>${el[this.columns[1]]}: <a href="#">подробнее</a></figcaption>
             </figure>
             `
         }).join('');
@@ -49,7 +108,11 @@ export class Carusel {
     }
 
     htmlNavigation(){
-        return `<button class="pagination-prev">Back</button><span class="cnt">${this.offset + this.limit}</span> из ${this.total}<button class="pagination-next">Next</button>`;
+        return `
+            <button class="pagination-prev">Back</button>
+            <span class="out">${(this.offset + this.limit) < this.total ? (this.offset + this.limit) : this.total}</span> из <span>${this.total}</span>
+            <button class="pagination-next">Next</button>
+        `;
     }
 
     drawNavigation(){
@@ -67,61 +130,26 @@ export class Carusel {
     }
 
     draw(){
-        
-        this.$content.innerHTML = '';
         this.drawContent();
+        this.drawNavigation();
+        this.$out = document.querySelector(this.options.selector + ' .out');
+        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+        // console.log('CNT out', this.$out);
     }
+
     prepare(){
         if(document.body.clientWidth < 640){
             this.limit = 2;
         }
     }
+
     render(){
-        //document.body.clientWidth > 640 ? 4 : 2
-        this.$wrapper.innerHTML = '';
-        this.sliceArray(this.data);
-
-        this.draw();
-        this.$pagination.innerHTML = this.drawNavigation();
-
-        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
-        this.$cnt = document.querySelector(this.options.selector + ' .cnt');
-
-        const handlerClick = (e) => {
-           
-            console.log('click currentPage  ===>', this.offset + this.limit);
-            this.$cnt = document.querySelector(this.options.selector + ' .cnt');
+        if(this.data.length){
+            this.init();
             
-            if(this.isClickPrevButton(e)){
-                
-                if(this.currentPage > 1) {
-                    this.currentPage -= 1;
-                    this.$cnt.textContent = this.$cnt.textContent - this.data.slice(this.offset, this.offset + this.limit).length;
-                }else{
-                    this.currentPage = this.pages;
-                    this.$cnt.textContent = +this.total;
-                }
-            }
-        
-            if(this.isClickNextButton(e)){
-                
-                if(this.currentPage < this.pages) {
-                    this.currentPage += 1;
-                    this.$cnt.textContent = +this.$cnt.textContent + this.limit < this.total ? +this.$cnt.textContent + this.limit : this.total;
-                }else{
-                    this.currentPage = 1;
-                    this.$cnt.textContent = +this.limit;
-                }
-            }
 
-            this.$content = document.querySelector(this.options.selector + ' .carusel');
-            this.$content.remove();
-            this.sliceArray(this.data);
-            this.draw();
-            this.$wrapper.append(this.$pagination);
-        
+        }else{
+            this.$wrapper.innerHTML = `${this.emptyData}`;
         }
-        
-        this.$pagination.addEventListener('click', handlerClick);
     }
 }

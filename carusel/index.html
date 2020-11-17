@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carusel</title>
     <style>
+        .carusel-wrapper{
+            display: none;
+        }
+
         .loading{
             display: flex;
             grid-template-rows: 150px;
@@ -57,7 +61,7 @@
     </style>
 </head>
 <body>
-    <div class="carusel-wrapper">
+    <div class="carusel-wrapper less-calory">
         <div class="carusel">
             <figure>
                 <img src="/images/1.jpg" alt="1">
@@ -73,6 +77,19 @@
             </figure>
             <figure>
                 <img src="/images/4.jpg" alt="4">
+                <figcaption>Черная смородина: <a href="http://www.flickr.com/photos/rclark/">подробнее</a></figcaption>
+            </figure>
+        </div>
+        <div class="pagination">
+            <button class="next">Next</button>
+            <button class="prev">Back</button>
+        </div>
+    </div>
+
+    <div class="carusel-wrapper more-calory">
+        <div class="carusel">
+            <figure>
+                <img src="/images/1.jpg" alt="1">
                 <figcaption>Черная смородина: <a href="http://www.flickr.com/photos/rclark/">подробнее</a></figcaption>
             </figure>
         </div>

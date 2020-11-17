@@ -31,4 +31,4 @@ export const dataImages = [
         src: 'images/8.jpg',
         title: 'Title8'
     },
-]
+];
