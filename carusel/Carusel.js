@@ -13,18 +13,25 @@ export class Carusel {
         this.offset = 0;
 
         this.offset = options.offset;
-        this.limit = document.body.clientWidth > 640 ? options.limit : 2;
 
-        // this.outCnt = (this.offset + this.limit) < this.total ? (this.offset + this.limit) : this.total;
+        // if(document.body.clientWidth > 640){
+        //     this.limit = options.limit;
+        // }else if(640 > document.body.clientWidth > 469 ){
+        //     this.limit = 2;
+        // }else if(document.body.clientWidth < 469 ){
+        //     this.limit = 1;
+        // }
+        this.limit = this.options.limit;
+        // this.limit = document.body.clientWidth > 640 ? this.options.limit : 2;
 
-        //console.log('window.screen.width ===>', document.body.clientWidth);
+        console.log('window.screen.width ===>', document.body.clientWidth);
 
-        this.pages = Math.ceil(this.total / options.limit);
+        this.pages = Math.ceil(this.total / this.options.limit);
 
         this.$out = null;
         this.$pagination = null;
 
-        this.$wrapper = document.querySelector(options.selector);
+        this.$wrapper = document.querySelector(this.options.selector);
 
         this.$wrapper.innerHTML = '';
     }
@@ -35,14 +42,12 @@ export class Carusel {
 
         setTimeout(() => {
             this.$wrapper.innerHTML = '';
+            
             this.sliceArray(this.data);
             this.draw();
             
             const handlerClick = (e) => {
-           
-                // console.log('click currentPage  ===>', this.offset + this.limit);
-                // this.$cnt = document.querySelector(this.options.selector + ' .cnt');
-                
+
                 if(this.isClickPrevButton(e)){
                     
                     if(this.currentPage > 1) {
@@ -68,8 +73,7 @@ export class Carusel {
                 this.sliceArray(this.data);
                 this.$content = document.querySelector(this.options.selector + ' .carusel');
                 this.$content.innerHTML = this.htmlContent(this.currentData);
-                
-                //this.drawContent();
+
             }
 
             this.$pagination.addEventListener('click', handlerClick);
@@ -116,7 +120,7 @@ export class Carusel {
     }
 
     drawNavigation(){
-        const navWrap = document.createElement('div');
+        const navWrap = document.createElement('nav');
         navWrap.className = 'pagination';
         navWrap.innerHTML = this.htmlNavigation();
         this.$wrapper.append(navWrap);
@@ -134,7 +138,6 @@ export class Carusel {
         this.drawNavigation();
         this.$out = document.querySelector(this.options.selector + ' .out');
         this.$pagination = document.querySelector(this.options.selector + ' .pagination');
-        // console.log('CNT out', this.$out);
     }
 
     prepare(){
@@ -146,9 +149,8 @@ export class Carusel {
     render(){
         if(this.data.length){
             this.init();
-            
-
         }else{
+            this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
         }
     }

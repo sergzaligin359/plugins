@@ -23,13 +23,17 @@ const titles = [
 ];
 
 const datatable = new Datatable(data, columns, titles, sortable, {
-    datatableSelector: '.datatable',
-    currentPage: 1,
+    selector: '.less-calory',
     limit: 3,
-    offset: 0,
-    total: data.length
+    emptyData: '<div>Элементов не найдено!</div>'
 });
 
-console.log('Instance class Datatable', datatable);
-
 datatable.render();
+
+const datatable2 = new Datatable(data, columns, titles, sortable, {
+    selector: '.more-calory',
+    limit: 3,
+    emptyData: '<div>Элементов не найдено!</div>'
+});
+
+datatable2.render();

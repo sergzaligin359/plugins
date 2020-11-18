@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datatable</title>
     <style>
-        .datatable{
+        .datatable-wrapper{
             box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 5px 8px 0 rgba(0,0,0,.14),0 1px 14px 0 rgba(0,0,0,.12);
         }
 
@@ -45,11 +45,24 @@
 </head>
 <body>
 
-    <div class="datatable">
+    <div class="datatable-wrapper less-calory">
         <div>
-            <input type="text" name="search" id="search">
+            <input type="text" name="search"  class="search-field">
         </div>
-        <table class="table" border="1"></table>
+        <table class="table" border="1">
+            <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Калории</th>
+                <th>Гликемический индекс</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Title 1</td>
+                <td>222</td>
+                <td>55</td>
+            </tr>
+        </table>
         <nav>
             <ul class="pagination">
                 <li>1</li>
@@ -59,6 +72,32 @@
         </nav>
     </div>
 
+    <div class="datatable-wrapper more-calory">
+        <div>
+            <input type="text" name="search"  class="search-field">
+        </div>
+        <table class="table" border="1">
+            <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Калории</th>
+                <th>Гликемический индекс</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Title 1</td>
+                <td>222</td>
+                <td>55</td>
+            </tr>
+        </table>
+        <nav>
+            <ul class="pagination">
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </nav>
+    </div>
     <section class="block">
         <header>
             <h2>Title lorem ipsum</h2>
