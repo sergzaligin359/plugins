@@ -49,36 +49,27 @@ export class Datatable{
     }
 
     htmlTd(data){
-    
-
-            return data.map(item => {
+        return data.map(item => {
+            if(this.isActions){
                 return `<tr>` +
-                   this.columns.map(el => {
-                       return `<td>${item[el]}</td>`;
-                    }).join('');
-                + `<tr>`;
-            }).join('');
-
-
+                    this.columns.map(el => {
+                        return `<td>${item[el]}</td>`;
+                    }).join('') + `
+                        <td>
+                            <div class="action-list">
+                                <span class="action-delete" data-actionId=${ item.id }>Del</span>
+                                <span class="action-update" data-actionId=${ item.id }>Update</span>
+                            </div>
+                        </td>
+                    <tr>`;
+            }else{
+                return `<tr>` +
+                this.columns.map(el => {
+                    return `<td>${item[el]}</td>`;
+                }).join('');
+            }
+        }).join('');
     }
-
-    // htmlTd(data){
-    //     if(this.isActions){
-    //         return data.map(item => `<tr>
-    //             <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
-    //             <td>
-    //                 <div class="action-list">
-    //                     <span class="action-delete" data-actionId=${ item.id }>Del</span>
-    //                     <span class="action-update" data-actionId=${ item.id }>Update</span>
-    //                 </div>
-    //             </td>
-    //         <tr>`).join('');
-    //     }else{
-    //         return data.map(item => `<tr>
-    //             <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
-    //         <tr>`).join('');
-    //     }
-    // }
 
     htmlSearch(){
         this.$searchField = document.createElement('div');
