@@ -20,6 +20,7 @@ export class Datatable{
         this.titles = titles;
         this.sortable = sortable;
         this.currentData = [];
+        this.searchData = [];
         this.emptyData = this.options.emptyData;
         
         this.$pagination = null;
@@ -132,13 +133,29 @@ export class Datatable{
     searchElements(){
         const searchHeandler = (e) => {
             this.searchText = e.target.value;
-            console.log('search txt', this.searchText)
+            const exp = new RegExp(this.searchText, 'i');
+
+            this.searchData = this.data.filter(el => {
+                if (this.searchText != '' && this.searchText != ' ' && el.title.search(exp) != -1) {
+                    return el;
+                } else if(this.searchText == ''){
+                    return el;
+                }
+            });
+            this.currentData = this.searchData;
+            this.sliceArray(this.currentData);
+            this.$table.innerHTML = this.htmlTd(this.currentData);
+            this.pages = Math.ceil(this.searchData.length / this.options.limit);
+            console.log('search this.pages', this.pages);
+            console.log('search this.currentData', this.searchData);
+            this.$pagination.replaceWith(this.htmlPagination());
+            this.navigationElements('d');
         };
 
         this.$searchField.addEventListener('input', searchHeandler);
     }
 
-    navigationElements(){
+    navigationElements(mode=''){
         const handlerClick = (e) => {
 
             if(this.isClickPaginationItemButton(e)){
@@ -160,8 +177,13 @@ export class Datatable{
                     this.currentPage = 1;
                 }
             }
-        
-            this.sliceArray(this.data);
+            
+            if(mode == 'd'){
+                this.sliceArray(this.searchData);
+            }else{
+                this.sliceArray(this.data);
+            }
+            
             this.$table.innerHTML = this.htmlTd(this.currentData);
 
             // console.log('pagination', this.currentPage)
