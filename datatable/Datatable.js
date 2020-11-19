@@ -26,6 +26,8 @@ export class Datatable{
         this.$table = null;
         this.$searchField = null;
 
+        this.searchText = '';
+
         this.$wrapper = document.querySelector(this.options.selector);
         this.$wrapper.innerHTML = '';
         
@@ -127,21 +129,73 @@ export class Datatable{
         this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
+    searchElements(){
+        const searchHeandler = (e) => {
+            this.searchText = e.target.value;
+            console.log('search txt', this.searchText)
+        };
+
+        this.$searchField.addEventListener('input', searchHeandler);
+    }
+
+    navigationElements(){
+        const handlerClick = (e) => {
+
+            if(this.isClickPaginationItemButton(e)){
+                this.currentPage = Number(e.target.textContent);
+            }
+        
+            if(this.isClickPrevButton(e)){
+                if(this.currentPage > 1) {
+                    this.currentPage -= 1;
+                }else{
+                    this.currentPage = this.pages;
+                }
+            }
+        
+            if(this.isClickNextButton(e)){
+                if(this.currentPage < this.pages) {
+                    this.currentPage += 1;
+                }else{
+                    this.currentPage = 1;
+                }
+            }
+        
+            this.sliceArray(this.data);
+            this.$table.innerHTML = this.htmlTd(this.currentData);
+
+            // console.log('pagination', this.currentPage)
+        };
+
+        this.$pagination.addEventListener('click', handlerClick);
+    }
+
     render(){
         if(this.data.length){
             this.sliceArray(this.data);
             this.draw();
-
-            const searchHeandler = (e) => {
-                console.log('input:search', e.target.value)
-            };
-
-            this.$searchField.addEventListener('input', searchHeandler);
-
+            this.searchElements();
+            this.navigationElements();
         }else{
             this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
         }
+    }
+
+    isClickPrevButton(e){
+        return e.target.className === 'pagination-prev';
+    }
+
+    isClickNextButton(e){
+        return e.target.className === 'pagination-next';
+    }
+
+    isClickSortButton(e){
+        return e.target.className === 'sort';
+    }
+
+    isClickPaginationItemButton(e){
+        return e.target.className === 'pagination-item';
     }
 
     $emit(event, ...args) {
