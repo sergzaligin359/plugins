@@ -1,7 +1,13 @@
+import { Emitter } from './eventEmitter.js';
+
 export class Datatable{
 
-    constructor(data=[], columns=[], titles=[], sortable=[], options={}){
+    constructor(data=[], columns=[], titles=[], sortable=[], actions=[], options={}){
         this.options = options;
+        this.actions = actions;
+        this.isActions = actions.length > 0 ? true : false;
+
+        this.emitter = new Emitter;
 
         this.data = data;
         this.limit = this.options.limit;
@@ -35,31 +41,48 @@ export class Datatable{
                     <span class="sort-down" data-sort=${columns[index]}>Down</span>
                 </span>
             </th>`).join('');
+            if(this.isActions){
+                html += '<th>Действия</th>'
+            }
         html += '</tr>';
         return html;
     }
 
     htmlTd(data){
-        if(this.columns.includes('actions')){
-            return data.map(item => `<tr>
-                <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
-                <td>
-                <div class="action-list">
-                    <span class="action-delete" data-actionId=${ item.id }>Del</span>
-                    <span class="action-update" data-actionId=${ item.id }>Update</span>
-                </div>
-                </td>
-            <tr>`).join('');
-        }else{
-            return data.map(item => `<tr>
-                <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
-            <tr>`).join('');
-        }
+    
+
+            return data.map(item => {
+                return `<tr>` +
+                   this.columns.map(el => {
+                       return `<td>${item[el]}</td>`;
+                    }).join('');
+                + `<tr>`;
+            }).join('');
+
+
     }
+
+    // htmlTd(data){
+    //     if(this.isActions){
+    //         return data.map(item => `<tr>
+    //             <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
+    //             <td>
+    //                 <div class="action-list">
+    //                     <span class="action-delete" data-actionId=${ item.id }>Del</span>
+    //                     <span class="action-update" data-actionId=${ item.id }>Update</span>
+    //                 </div>
+    //             </td>
+    //         <tr>`).join('');
+    //     }else{
+    //         return data.map(item => `<tr>
+    //             <td>${ item.id }</td><td>${ item.title }</td><td>${ item.cal }</td><td>${ item.gi }</td>
+    //         <tr>`).join('');
+    //     }
+    // }
 
     htmlSearch(){
         this.$searchField = document.createElement('div');
-        this.$searchField.className = 'search-field';
+        this.$searchField.className = 'search';
         let html = `<input type="text" name="search" class="search-field">`;
         this.$searchField.innerHTML = html;
         return this.$searchField;
@@ -91,6 +114,12 @@ export class Datatable{
         return this.$pagination;
     }
 
+    getDOMElementsForComponent(){
+        this.$searchField = document.querySelector(this.options.selector + ' .search .search-field');
+        this.$table = document.querySelector(this.options.selector + ' tbody');
+        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+    }
+
     draw(){
         const searchField = this.htmlSearch();
         const table = this.htmlTable();
@@ -98,15 +127,38 @@ export class Datatable{
         this.$wrapper.append(searchField);
         this.$wrapper.append(table);
         this.$wrapper.append(pagination);
+
+        this.getDOMElementsForComponent();
+    }
+
+    sliceArray(data){
+        this.offset = (this.currentPage * this.limit) - this.limit;
+        this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
     render(){
         if(this.data.length){
+            this.sliceArray(this.data);
             this.draw();
+
+            const searchHeandler = (e) => {
+                console.log('input:search', e.target.value)
+            };
+
+            this.$searchField.addEventListener('input', searchHeandler);
+
         }else{
             this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
         }
+    }
+
+    $emit(event, ...args) {
+        this.emitter.emit(event, ...args);
+    }
+
+    $on(event, fn) {
+        this.emitter.subscribe(event, fn);
     }
 
 }
