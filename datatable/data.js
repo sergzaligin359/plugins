@@ -65,4 +65,16 @@ export const data = [
         cal: 311,
         gi: 10
     },
+    {
+        id: 12,
+        title: 'Grecha',
+        cal: 393,
+        gi: 11
+    },
+    {
+        id: 13,
+        title: 'iris',
+        cal: 31,
+        gi: 13
+    },
 ];

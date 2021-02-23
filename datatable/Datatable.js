@@ -124,9 +124,17 @@ export class Datatable{
 
         this.getDOMElementsForComponent();
     }
-
-    sliceArray(data){
-        this.offset = (this.currentPage * this.limit) - this.limit;
+    // 11
+    sliceArray(data, mode = ''){
+        console.log('sliceArray', data)
+        if(mode == 'search'){
+            this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
+            this.currentData = data.slice(0, 0 + this.limit);
+            //this.currentData = data.slice(this.offset, this.offset + this.limit);
+            console.log('sliceArray current data', this.currentData)
+            this.$table.innerHTML = this.htmlTd(this.currentData);
+        }
+        this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
         this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
@@ -142,13 +150,23 @@ export class Datatable{
                     return el;
                 }
             });
-            this.currentData = this.searchData;
-            this.sliceArray(this.currentData);
-            this.$table.innerHTML = this.htmlTd(this.currentData);
+            console.log('First search', this.searchData);
+            // this.currentData = this.searchData;
+
+            // this.sliceArray(this.searchData, 'd');
+
+            this.sliceArray(this.searchData, 'search');
+            
+            
+            //this.currentData = this.searchData;
+
             this.pages = Math.ceil(this.searchData.length / this.options.limit);
-            console.log('search this.pages', this.pages);
-            console.log('search this.currentData', this.searchData);
+            console.log('search this.currentPage', this.currentPage);
+            console.log('search this.searchData', this.searchData);
+            console.log('search this.currentData', this.currentData);
+            
             this.$pagination.replaceWith(this.htmlPagination());
+            
             this.navigationElements('d');
         };
 
@@ -157,7 +175,7 @@ export class Datatable{
 
     navigationElements(mode=''){
         const handlerClick = (e) => {
-
+            this.getDOMElementsForComponent();
             if(this.isClickPaginationItemButton(e)){
                 this.currentPage = Number(e.target.textContent);
             }
@@ -187,13 +205,16 @@ export class Datatable{
             this.$table.innerHTML = this.htmlTd(this.currentData);
 
             // console.log('pagination', this.currentPage)
+            console.log('click this.pages', this.pages);
+            console.log('click this.searchData', this.searchData);
+            console.log('click this.currentData', this.currentData);
         };
 
         this.$pagination.addEventListener('click', handlerClick);
     }
 
     render(){
-        if(this.data.length){
+        if(this.data.length > 0){
             this.sliceArray(this.data);
             this.draw();
             this.searchElements();
