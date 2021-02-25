@@ -27,10 +27,62 @@ export class Datatable{
         this.$table = null;
         this.$searchField = null;
 
+        this.sortUp = null;
+        this.sortDown = null;
+        this.sortCols = null;
+
         this.searchText = '';
 
         this.$wrapper = document.querySelector(this.options.selector);
         this.$wrapper.innerHTML = '';
+        
+    }
+    sortField(array, field) {
+        array.sort(function(a, b) {
+            if (a[field] > b[field]) {
+                return 1;
+              }
+              if (a[field] < b[field]) {
+                return -1;
+              }
+              return 0;
+          })
+    }
+    sortFieldA(array, field) {
+        array.sort(function(a, b) {
+            if (a[field] < b[field]) {
+                return 1;
+              }
+              if (a[field] > b[field]) {
+                return -1;
+              }
+              return 0;
+          })
+    }
+    sortColumn(){
+
+        function compareNumbers(a, b) {
+            return a[key] - b[key];
+        }
+
+        const handlerClick = (e) => {
+            console.log('click sortColumn', e.target.dataset);
+            if(e.target.dataset.sortUp){
+                this.sortField(this.currentData, e.target.dataset.sortUp)
+                console.log('this.currentData sort', this.currentData)
+                this.$table.innerHTML = this.htmlTd(this.currentData);
+                
+            }
+
+            if(e.target.dataset.sortDown){
+                this.sortFieldA(this.currentData, e.target.dataset.sortDown)
+                console.log('this.currentData sort', this.currentData)
+                this.$table.innerHTML = this.htmlTd(this.currentData);
+            }
+        }
+        
+        // console.log('this.sortCols', this.sortCols);
+        this.sortCols.forEach(el => el.addEventListener('click', handlerClick));
         
     }
 
@@ -40,8 +92,8 @@ export class Datatable{
             <th>
                 ${ title }
                 <span class="sort" data-sorted=${sortable.includes(columns[index]) ? 'true ': 'false'}>
-                    <span class="sort-up" data-sort=${columns[index]}>Up</span>
-                    <span class="sort-down" data-sort=${columns[index]}>Down</span>
+                    <span class="sort-up" data-sort-up=${columns[index]}>Up</span>
+                    <span class="sort-down" data-sort-down=${columns[index]}>Down</span>
                 </span>
             </th>`).join('');
             if(this.isActions){
@@ -109,9 +161,13 @@ export class Datatable{
     }
 
     getDOMElementsForComponent(){
-        this.$searchField = document.querySelector(this.options.selector + ' .search .search-field');
+        this.$searchField = document.querySelector(this.options.selector + ' .search-field');
         this.$table = document.querySelector(this.options.selector + ' tbody');
         this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+
+        this.sortUp = document.querySelector(this.options.selector + ' .sort-up');
+        this.sortDown = document.querySelector(this.options.selector + ' .sort-down');
+        this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
     }
 
     draw(){
@@ -126,12 +182,12 @@ export class Datatable{
     }
     // 11
     sliceArray(data, mode = ''){
-        console.log('sliceArray', data)
+        // console.log('sliceArray', data)
         if(mode == 'search'){
             this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
             this.currentData = data.slice(0, 0 + this.limit);
             //this.currentData = data.slice(this.offset, this.offset + this.limit);
-            console.log('sliceArray current data', this.currentData)
+            //console.log('sliceArray current data', this.currentData)
             this.$table.innerHTML = this.htmlTd(this.currentData);
         }
         this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
@@ -144,13 +200,13 @@ export class Datatable{
             const exp = new RegExp(this.searchText, 'i');
 
             this.searchData = this.data.filter(el => {
-                if (this.searchText != '' && this.searchText != ' ' && el.title.search(exp) != -1) {
+                if (this.searchText != '' && this.searchText != ' ' && el[this.columns[1]].search(exp) != -1) {
                     return el;
                 } else if(this.searchText == ''){
                     return el;
                 }
             });
-            console.log('First search', this.searchData);
+            // console.log('First search', this.searchData);
             // this.currentData = this.searchData;
 
             // this.sliceArray(this.searchData, 'd');
@@ -161,9 +217,9 @@ export class Datatable{
             //this.currentData = this.searchData;
 
             this.pages = Math.ceil(this.searchData.length / this.options.limit);
-            console.log('search this.currentPage', this.currentPage);
-            console.log('search this.searchData', this.searchData);
-            console.log('search this.currentData', this.currentData);
+            // console.log('search this.currentPage', this.currentPage);
+            // console.log('search this.searchData', this.searchData);
+            // console.log('search this.currentData', this.currentData);
             
             this.$pagination.replaceWith(this.htmlPagination());
             
@@ -219,6 +275,7 @@ export class Datatable{
             this.draw();
             this.searchElements();
             this.navigationElements();
+            this.sortColumn();
         }else{
             this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
