@@ -37,86 +37,52 @@ export class Datatable{
         this.$wrapper.innerHTML = '';
         
     }
-
-    getDOMElementsForComponent(){
-        this.$table = document.querySelector(this.options.selector + ' tbody');
-        this.sortUp = document.querySelector(this.options.selector + ' .sort-up');
-        this.sortDown = document.querySelector(this.options.selector + ' .sort-down');
-        this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
+    sortField(array, field) {
+        array.sort(function(a, b) {
+            if (a[field] > b[field]) {
+                return 1;
+              }
+              if (a[field] < b[field]) {
+                return -1;
+              }
+              return 0;
+          })
     }
-
+    sortFieldA(array, field) {
+        array.sort(function(a, b) {
+            if (a[field] < b[field]) {
+                return 1;
+              }
+              if (a[field] > b[field]) {
+                return -1;
+              }
+              return 0;
+          })
+    }
     sortColumn(){
+
+        function compareNumbers(a, b) {
+            return a[key] - b[key];
+        }
 
         const handlerClick = (e) => {
 
             console.log('click sortColumn', e.target.dataset);
 
             if(e.target.dataset.sortUp){
-                this.sortFieldUp(this.data, e.target.dataset.sortUp);
-                console.log('this.currentData sort', this.data);
-                this.draw();
+                this.sortField(this.currentData, e.target.dataset.sortUp)
+                console.log('this.currentData sort', this.currentData)
             }
 
             if(e.target.dataset.sortDown){
-                this.sortFieldDown(this.data, e.target.dataset.sortDown);
-                console.log('this.currentData sort', this.data);
-                this.draw();
+                this.sortFieldA(this.currentData, e.target.dataset.sortDown)
+                console.log('this.currentData sort', this.currentData)
             }
-
         }
         
+        // console.log('this.sortCols', this.sortCols);
         this.sortCols.forEach(el => el.addEventListener('click', handlerClick));
-    }
-
-    drawTBody(){
-        const td = this.htmlTd(this.currentData);
-        const tbody = document.createElement('tbody');
-        tbody.innerHTML = td;
-        return tbody;
-    }
-
-    drawTHead(){
-        const th = this.htmlTh(this.titles, this.columns, this.sortable);
-        const thead = document.createElement('thead');
-        thead.innerHTML = th;
-        return thead;
-    }
-
-    drawTable(){
-        const table = document.createElement('table');
-        table.border = 1;
-        return table;
-    }
-
-    draw(){
-        const table = this.htmlTable(this.data);
-        this.$wrapper.append(table);
-        this.getDOMElementsForComponent();
-        this.sortColumn();
-    }
-
-    render(){
-        if(this.data.length > 0){
-            this.sliceArray(this.data);
-            this.$table = this.drawTable();
-            const thead = this.drawTHead();
-            const tbody = this.drawTBody();
-            const pagination = this.htmlPagination();
-            const search = this.htmlSearch();
-
-            this.$wrapper.append(search);
-            this.$table.append(thead);
-            this.$table.append(tbody);
-            this.$wrapper.append(this.$table);
-            this.$wrapper.append(pagination);
-
-            this.getDOMElementsForComponent();
-            this.navigationElements();
-            this.searchElements();
-        }else{
-            this.$wrapper.style.display = 'block';
-            this.$wrapper.innerHTML = `${this.emptyData}`;
-        }
+        
     }
 
     htmlTh(titles, columns, sortable){
@@ -159,40 +125,69 @@ export class Datatable{
         }).join('');
     }
 
-    htmlTable(data){
+    htmlSearch(){
+        this.$searchField = document.createElement('div');
+        this.$searchField.className = 'search';
+        let html = `<input type="text" name="search" class="search-field">`;
+        this.$searchField.innerHTML = html;
+        return this.$searchField;
+    }
+
+    htmlTable(){
         this.$table = document.createElement('table');
         this.$table.border = 1;
         const thead = document.createElement('thead');
         thead.innerHTML = this.htmlTh(this.titles, this.columns, this.sortable);
         this.$table.append(thead);
         const tbody = document.createElement('tbody');
-        tbody.innerHTML = this.htmlTd(data);
+        tbody.innerHTML = this.htmlTd(this.currentData);
         this.$table.append(tbody);
         return this.$table;
     }
 
-    sortFieldUp(array, field) {
-        array.sort(function(a, b) {
-            if (a[field] > b[field]) {
-                return 1;
-              }
-              if (a[field] < b[field]) {
-                return -1;
-              }
-              return 0;
-        })
+    htmlPagination(){
+        this.$pagination = document.createElement('nav');
+        this.$pagination.className = 'pagination';
+        let html = '<ul>';
+        html += '<li class="pagination-prev">Назад</li>';
+        for(let i = 1; i <= this.pages; i++){
+            html += `<li class="pagination-item">${i}</li>`;
+        }
+        html += '<li class="pagination-next">Вперед</li>';
+        html += '</ul>';
+        this.$pagination.innerHTML = html;
+        return this.$pagination;
     }
 
-    sortFieldDown(array, field) {
-        array.sort(function(a, b) {
-            if (a[field] < b[field]) {
-                return 1;
-              }
-              if (a[field] > b[field]) {
-                return -1;
-              }
-              return 0;
-         })
+    getDOMElementsForComponent(){
+        this.$searchField = document.querySelector(this.options.selector + ' .search-field');
+        this.$table = document.querySelector(this.options.selector + ' tbody');
+        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+
+        this.sortUp = document.querySelector(this.options.selector + ' .sort-up');
+        this.sortDown = document.querySelector(this.options.selector + ' .sort-down');
+        this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
+    }
+
+    draw(){
+        const searchField = this.htmlSearch();
+        const table = this.htmlTable();
+        const pagination = this.htmlPagination();
+        this.$wrapper.append(searchField);
+        this.$wrapper.append(table);
+        this.$wrapper.append(pagination);
+
+        this.getDOMElementsForComponent();
+    }
+    // 11
+    sliceArray(data, mode = ''){
+        if(mode == 'search'){
+            this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
+            this.currentData = data.slice(0, 0 + this.limit);
+            this.$table.innerHTML = this.htmlTd(this.currentData);
+        }
+        this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
+        this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
     searchElements(){
@@ -218,16 +213,6 @@ export class Datatable{
         };
 
         this.$searchField.addEventListener('input', searchHeandler);
-    }
-
-    sliceArray(data, mode = ''){
-        if(mode == 'search'){
-            this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
-            this.currentData = data.slice(0, 0 + this.limit);
-            this.$table.innerHTML = this.htmlTd(this.currentData);
-        }
-        this.offset = (this.currentPage * this.limit) - this.limit;// (4 * 3) - 3 = 9
-        this.currentData = data.slice(this.offset, this.offset + this.limit);
     }
 
     navigationElements(mode=''){
@@ -266,26 +251,17 @@ export class Datatable{
         this.$pagination.addEventListener('click', handlerClick);
     }
 
-    htmlSearch(){
-        this.$searchField = document.createElement('div');
-        this.$searchField.className = 'search';
-        let html = `<input type="text" name="search" class="search-field">`;
-        this.$searchField.innerHTML = html;
-        return this.$searchField;
-    }
-
-    htmlPagination(){
-        this.$pagination = document.createElement('nav');
-        this.$pagination.className = 'pagination';
-        let html = '<ul>';
-        html += '<li class="pagination-prev">Назад</li>';
-        for(let i = 1; i <= this.pages; i++){
-            html += `<li class="pagination-item">${i}</li>`;
+    render(){
+        if(this.data.length > 0){
+            this.sliceArray(this.data);
+            this.draw();
+            this.searchElements();
+            this.navigationElements();
+            this.sortColumn();
+        }else{
+            this.$wrapper.style.display = 'block';
+            this.$wrapper.innerHTML = `${this.emptyData}`;
         }
-        html += '<li class="pagination-next">Вперед</li>';
-        html += '</ul>';
-        this.$pagination.innerHTML = html;
-        return this.$pagination;
     }
 
     isClickPrevButton(e){
@@ -302,6 +278,14 @@ export class Datatable{
 
     isClickPaginationItemButton(e){
         return e.target.className === 'pagination-item';
+    }
+
+    $emit(event, ...args) {
+        this.emitter.emit(event, ...args);
+    }
+
+    $on(event, fn) {
+        this.emitter.subscribe(event, fn);
     }
 
 }
