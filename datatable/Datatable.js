@@ -54,21 +54,26 @@ export class Datatable{
             if(e.target.dataset.sortUp){
                 this.sortFieldUp(this.data, e.target.dataset.sortUp);
                 console.log('this.currentData sort', this.data);
-                this.draw();
+                
             }
 
             if(e.target.dataset.sortDown){
                 this.sortFieldDown(this.data, e.target.dataset.sortDown);
                 console.log('this.currentData sort', this.data);
-                this.draw();
             }
-
+            
+            const tbody = this.drawTBody();
+            // console.log('this.$table.tbody', this.$table);
+            console.log('tbody', tbody);
+            this.$table.replaceWith(tbody);
+            this.getDOMElementsForComponent();
         }
         
         this.sortCols.forEach(el => el.addEventListener('click', handlerClick));
     }
 
     drawTBody(){
+        this.sliceArray(this.data);
         const td = this.htmlTd(this.currentData);
         const tbody = document.createElement('tbody');
         tbody.innerHTML = td;
@@ -113,6 +118,7 @@ export class Datatable{
             this.getDOMElementsForComponent();
             this.navigationElements();
             this.searchElements();
+            this.sortColumn();
         }else{
             this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
