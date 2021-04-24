@@ -43,6 +43,7 @@ export class Datatable{
         this.sortUp = document.querySelector(this.options.selector + ' .sort-up');
         this.sortDown = document.querySelector(this.options.selector + ' .sort-down');
         this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
+        this.actions = document.querySelectorAll(this.options.selector + ' .action-list span');
     }
 
     sortColumn(){
@@ -70,6 +71,28 @@ export class Datatable{
         }
         
         this.sortCols.forEach(el => el.addEventListener('click', handlerClick));
+    }
+
+    actionsBtn(){
+        const handlerClick = (e) => {
+            
+            if( e.target.className === 'action-update'){
+                console.log('UPDATE', e.target.dataset.actionid);
+            }
+
+            if( e.target.className === 'action-delete'){
+                console.log('DELETE', e.target.dataset.actionid);
+                this.data = this.data.filter(item => item.id != e.target.dataset.actionid);
+                this.sliceArray(this.data);
+                const tbody = this.drawTBody();
+                this.$table.replaceWith(tbody);
+                this.getDOMElementsForComponent();
+                this.actionsBtn();
+            }
+            this.getDOMElementsForComponent();
+
+        }
+        this.actions.forEach(el => el.addEventListener('click', handlerClick));
     }
 
     drawTBody(){
@@ -119,6 +142,7 @@ export class Datatable{
             this.navigationElements();
             this.searchElements();
             this.sortColumn();
+            this.actionsBtn();
         }else{
             this.$wrapper.style.display = 'block';
             this.$wrapper.innerHTML = `${this.emptyData}`;
@@ -266,7 +290,7 @@ export class Datatable{
             }
             
             this.$table.innerHTML = this.htmlTd(this.currentData);
-
+           
         };
 
         this.$pagination.addEventListener('click', handlerClick);
