@@ -44,6 +44,7 @@ export class Datatable{
         this.sortDown = document.querySelector(this.options.selector + ' .sort-down');
         this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
         this.actions = document.querySelectorAll(this.options.selector + ' .action-list span');
+        this.$pagination = document.querySelector(this.options.selector + ' .pagination');
     }
 
     sortColumn(){
@@ -83,11 +84,25 @@ export class Datatable{
             if( e.target.className === 'action-delete'){
                 console.log('DELETE', e.target.dataset.actionid);
                 this.data = this.data.filter(item => item.id != e.target.dataset.actionid);
+
+                this.pages = Math.ceil(this.data.length / this.options.limit);
+                console.log('PAGES', this.pages);
+
                 this.sliceArray(this.data);
+
+                
+
                 const tbody = this.drawTBody();
                 this.$table.replaceWith(tbody);
+
+                const pagination = this.htmlPagination();
+                console.log('pagination', pagination);
+                console.log('this.$pagination', this.$pagination);
+                this.$pagination.replaceWith(pagination);
+                
                 this.getDOMElementsForComponent();
                 this.actionsBtn();
+                this.navigationElements();
             }
             this.getDOMElementsForComponent();
 
@@ -305,8 +320,8 @@ export class Datatable{
     }
 
     htmlPagination(){
-        this.$pagination = document.createElement('nav');
-        this.$pagination.className = 'pagination';
+        const pagination = document.createElement('nav');
+        pagination.className = 'pagination';
         let html = '<ul>';
         html += '<li class="pagination-prev">Назад</li>';
         for(let i = 1; i <= this.pages; i++){
@@ -314,8 +329,8 @@ export class Datatable{
         }
         html += '<li class="pagination-next">Вперед</li>';
         html += '</ul>';
-        this.$pagination.innerHTML = html;
-        return this.$pagination;
+        pagination.innerHTML = html;
+        return pagination;
     }
 
     isClickPrevButton(e){
