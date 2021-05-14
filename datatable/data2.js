@@ -1,28 +1,28 @@
 export const data2 = [
     {
         id: 1,
-        name: 'name1',
+        name: 'Арбуз',
         cal: 44,
     },
     {
         id: 2,
-        name: 'name2',
-        cal: 44,
+        name: 'Абрикос',
+        cal: 11,
     },
     {
         id: 3,
-        name: 'Grecha',
-        cal: 14,
+        name: 'Киви',
+        cal: 7,
     },
     {
         id: 4,
-        name: 'Pensil',
-        cal: 44,
+        name: 'Лайм',
+        cal: 3,
     },
     {
         id: 5,
-        name: 'apple',
-        cal: 53,
+        name: 'Банан',
+        cal: 99,
     },
 
 ];

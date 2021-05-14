@@ -45,6 +45,7 @@ export class Datatable{
         this.sortCols = document.querySelectorAll(this.options.selector + ' .sort');
         this.actions = document.querySelectorAll(this.options.selector + ' .action-list span');
         this.$pagination = document.querySelector(this.options.selector + ' .pagination');
+        this.$searchField = document.querySelector(this.options.selector + ' .search-field');
     }
 
     sortColumn(){
@@ -252,17 +253,26 @@ export class Datatable{
                     return el;
                 }
             });
-
+            // this.currentData = this.searchData;
             this.sliceArray(this.searchData, 'search');
             
             this.pages = Math.ceil(this.searchData.length / this.options.limit);
             
-            this.$pagination.replaceWith(this.htmlPagination());
+            //this.$pagination.replaceWith(this.htmlPagination());
             
+            //this.navigationElements('d');
+            const pagination = this.htmlPagination();
+            console.log('pagination', pagination);
+            console.log('this.$pagination', this.$pagination);
+            this.$pagination.replaceWith(pagination);
+            this.getDOMElementsForComponent();
             this.navigationElements('d');
+            console.log('CURRENT DATA', this.currentData);
+            console.log('SEARCH DATA', this.searchData);
         };
+            this.getDOMElementsForComponent();
 
-        this.$searchField.addEventListener('input', searchHeandler);
+            this.$searchField.addEventListener('input', searchHeandler);
     }
 
     sliceArray(data, mode = ''){

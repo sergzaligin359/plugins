@@ -71,7 +71,7 @@ export class Datatable{
 
             if(e.target.dataset.sortUp){
                 this.sortField(this.currentData, e.target.dataset.sortUp)
-                console.log('this.currentData sort', this.currentData)
+                console.log('this.currentData sort1', this.currentData)
             }
 
             if(e.target.dataset.sortDown){
