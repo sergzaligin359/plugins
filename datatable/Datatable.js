@@ -91,20 +91,41 @@ export class Datatable{
 
             if( e.target.className === 'action-delete'){
                 console.log('DELETE', e.target.dataset.actionid);
-                this.data = this.data.filter(item => item.id != e.target.dataset.actionid);
 
-                this.pages = Math.ceil(this.data.length / this.options.limit);
-                this.sliceArray(this.data);
+                if(this.searchData.length > 0){
+                    this.searchData = this.searchData.filter(item => item.id != e.target.dataset.actionid);
+                    this.pages = Math.ceil(this.searchData.length / this.options.limit);
+                    this.sliceArray(this.searchData);
+                }else{
+                    this.data = this.data.filter(item => item.id != e.target.dataset.actionid);
+                    this.pages = Math.ceil(this.data.length / this.options.limit);
+                    this.sliceArray(this.data);
+                }
 
-                const tbody = this.drawTBody();
-                this.$table.replaceWith(tbody);
+                // this.pages = Math.ceil(this.data.length / this.options.limit);
+                // this.sliceArray(this.data);
 
-                const pagination = this.htmlPagination();
-                this.$pagination.replaceWith(pagination);
+                let tbody = null;
+                let pagination = null;
+                if(this.searchData.length > 0){
+                    tbody = this.drawTBody(true);
+                    pagination = this.htmlPagination();
+                    this.$pagination.replaceWith(pagination);
+                    this.$table.replaceWith(tbody);
+                    this.getDOMElementsForComponent();
+                    this.actionsBtn();
+                    this.navigationElements('d');
+                }else{
+                    tbody = this.drawTBody();
+                    pagination = this.htmlPagination();
+                    this.$pagination.replaceWith(pagination);
+                    this.$table.replaceWith(tbody);
+                    this.getDOMElementsForComponent();
+                    this.actionsBtn();
+                    this.navigationElements();
+                }
+
                 
-                this.getDOMElementsForComponent();
-                this.actionsBtn();
-                this.navigationElements();
             }
             this.getDOMElementsForComponent();
 
