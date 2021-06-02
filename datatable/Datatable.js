@@ -94,18 +94,12 @@ export class Datatable{
                 this.data = this.data.filter(item => item.id != e.target.dataset.actionid);
 
                 this.pages = Math.ceil(this.data.length / this.options.limit);
-                console.log('PAGES', this.pages);
-
                 this.sliceArray(this.data);
-
-                
 
                 const tbody = this.drawTBody();
                 this.$table.replaceWith(tbody);
 
                 const pagination = this.htmlPagination();
-                console.log('pagination', pagination);
-                console.log('this.$pagination', this.$pagination);
                 this.$pagination.replaceWith(pagination);
                 
                 this.getDOMElementsForComponent();
@@ -277,9 +271,10 @@ export class Datatable{
             this.$pagination.replaceWith(pagination);
             this.getDOMElementsForComponent();
             this.navigationElements('d');
+            this.actionsBtn();
             
         };
-        
+
         this.getDOMElementsForComponent();
         this.$searchField.addEventListener('input', searchHeandler);
     }
