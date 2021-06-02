@@ -55,17 +55,28 @@ export class Datatable{
             console.log('click sortColumn', e.target.dataset);
 
             if(e.target.dataset.sortUp){
-                this.sortFieldUp(this.data, e.target.dataset.sortUp);
+
+                if(this.searchData.length > 0){
+                    this.sortFieldUp(this.searchData, e.target.dataset.sortUp);
+                }else{
+                    this.sortFieldUp(this.data, e.target.dataset.sortUp);
+                }
+                
                 console.log('this.currentData sort', this.data);
                 
             }
 
             if(e.target.dataset.sortDown){
-                this.sortFieldDown(this.data, e.target.dataset.sortDown);
+                if(this.searchData.length > 0){
+                    this.sortFieldDown(this.searchData, e.target.dataset.sortDown);
+                }else{
+                    this.sortFieldDown(this.data, e.target.dataset.sortDown);
+                }
+
                 console.log('this.currentData sort', this.data);
             }
             
-            const tbody = this.drawTBody();
+            const tbody = this.drawTBody(true);
             // console.log('this.$table.tbody', this.$table);
             console.log('tbody', tbody);
             this.$table.replaceWith(tbody);
@@ -111,8 +122,15 @@ export class Datatable{
         this.actions.forEach(el => el.addEventListener('click', handlerClick));
     }
 
-    drawTBody(){
-        this.sliceArray(this.data);
+    drawTBody(search=false){
+
+        if(search){
+            this.sliceArray(this.searchData)
+        }else{
+            this.sliceArray(this.data);
+        }
+
+        
         const td = this.htmlTd(this.currentData);
         const tbody = document.createElement('tbody');
         tbody.innerHTML = td;
