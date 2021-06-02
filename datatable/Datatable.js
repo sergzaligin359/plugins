@@ -52,18 +52,12 @@ export class Datatable{
 
         const handlerClick = (e) => {
 
-            console.log('click sortColumn', e.target.dataset);
-
             if(e.target.dataset.sortUp){
-
                 if(this.searchData.length > 0){
                     this.sortFieldUp(this.searchData, e.target.dataset.sortUp);
                 }else{
                     this.sortFieldUp(this.data, e.target.dataset.sortUp);
                 }
-                
-                console.log('this.currentData sort', this.data);
-                
             }
 
             if(e.target.dataset.sortDown){
@@ -72,8 +66,6 @@ export class Datatable{
                 }else{
                     this.sortFieldDown(this.data, e.target.dataset.sortDown);
                 }
-
-                console.log('this.currentData sort', this.data);
             }
 
             let tbody = null;
@@ -82,9 +74,7 @@ export class Datatable{
             }else{
                 tbody = this.drawTBody();
             }
-            
-            // console.log('this.$table.tbody', this.$table);
-            console.log('tbody', tbody);
+
             this.$table.replaceWith(tbody);
             this.getDOMElementsForComponent();
         }
@@ -136,10 +126,10 @@ export class Datatable{
             this.sliceArray(this.data);
         }
 
-        
         const td = this.htmlTd(this.currentData);
         const tbody = document.createElement('tbody');
         tbody.innerHTML = td;
+
         return tbody;
     }
 
@@ -265,7 +255,8 @@ export class Datatable{
          })
     }
 
-    searchElements(){
+    searchElements() {
+
         const searchHeandler = (e) => {
             this.searchText = e.target.value;
             const exp = new RegExp(this.searchText, 'i');
@@ -277,26 +268,20 @@ export class Datatable{
                     return el;
                 }
             });
-            // this.currentData = this.searchData;
-            this.sliceArray(this.searchData, 'search');
             
+            this.sliceArray(this.searchData, 'search');
             this.pages = Math.ceil(this.searchData.length / this.options.limit);
             
-            //this.$pagination.replaceWith(this.htmlPagination());
-            
-            //this.navigationElements('d');
             const pagination = this.htmlPagination();
-            console.log('pagination', pagination);
-            console.log('this.$pagination', this.$pagination);
+            
             this.$pagination.replaceWith(pagination);
             this.getDOMElementsForComponent();
             this.navigationElements('d');
-            console.log('CURRENT DATA', this.currentData);
-            console.log('SEARCH DATA', this.searchData);
+            
         };
-            this.getDOMElementsForComponent();
-
-            this.$searchField.addEventListener('input', searchHeandler);
+        
+        this.getDOMElementsForComponent();
+        this.$searchField.addEventListener('input', searchHeandler);
     }
 
     sliceArray(data, mode = ''){
