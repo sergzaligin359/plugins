@@ -5,6 +5,7 @@ export class Datatable{
     constructor(data=[], columns=[], titles=[], sortable=[], actions=[], options={}){
         this.options = options;
         this.actions = actions;
+        this.update = options.update;
         this.isActions = actions.length > 0 ? true : false;
 
         this.emitter = new Emitter;
@@ -86,7 +87,8 @@ export class Datatable{
         const handlerClick = (e) => {
             
             if( e.target.className === 'action-update'){
-                console.log('UPDATE', e.target.dataset.actionid);
+                // console.log('UPDATE', e.target.dataset.actionid);
+                this.update(e.target.dataset.actionid);
             }
 
             if( e.target.className === 'action-delete'){

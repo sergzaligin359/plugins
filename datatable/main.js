@@ -23,10 +23,18 @@ const titles = [
 
 const actions = ['1'];
 
+const update = (id) => {
+    console.log('update id', id + ' :Prefix')
+    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
+    .then(response => response.json())
+    .then(json => console.log(json))
+}
+
 const datatable = new Datatable(data, columns, titles, sortable, actions, {
     selector: '.less-calory',
     limit: 3,
-    emptyData: '<div>Элементов не найдено!</div>'
+    emptyData: '<div>Элементов не найдено!</div>',
+    update: update
 });
 
 datatable.render();
