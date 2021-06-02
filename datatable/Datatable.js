@@ -75,8 +75,14 @@ export class Datatable{
 
                 console.log('this.currentData sort', this.data);
             }
+
+            let tbody = null;
+            if(this.searchData.length > 0){
+                tbody = this.drawTBody(true);
+            }else{
+                tbody = this.drawTBody();
+            }
             
-            const tbody = this.drawTBody(true);
             // console.log('this.$table.tbody', this.$table);
             console.log('tbody', tbody);
             this.$table.replaceWith(tbody);
