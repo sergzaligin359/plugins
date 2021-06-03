@@ -342,7 +342,8 @@ export class Datatable{
             }
             
             this.$table.innerHTML = this.htmlTd(this.currentData);
-           
+            this.getDOMElementsForComponent();
+            this.actionsBtn();
         };
 
         this.$pagination.addEventListener('click', handlerClick);
