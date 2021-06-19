@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Diagramm</title>
+</head>
+<body>
+    <figure class="canvas"> 
+        <figcaption>
+          Процентное соотношение белков жиров и углеводов
+        </figcaption>
+        <div class="buttons">15/25/5 50 Math.round((product.pfc.protein / maxPfc) * 100))</div>
+        <svg viewBox="0 0 50 50" class="donut">
+          <!-- <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="#fff"></circle> -->
+<!--           <circle 
+              cx="50%" 
+              cy="50%" 
+              r="15.91549430918954" 
+              fill="transparent" 
+              stroke="#d2d3d4" 
+              stroke-width="3"
+          ></circle> -->
+          <circle 
+              class="donut-segment" 
+              cx="50%" 
+              cy="50%" 
+              r="15.91549430918954" 
+              fill="transparent" 
+              stroke="yellow" 
+              stroke-width="3" 
+              stroke-dasharray="100 100" 
+            >
+          </circle>
+          <circle 
+              class="donut-segment" 
+              cx="50%" 
+              cy="50%" 
+              r="15.91549430918954" 
+              fill="transparent" 
+              stroke="red" 
+              stroke-width="3" 
+              stroke-dasharray="30 100" 
+            >
+          </circle>
+          <circle 
+              class="donut-segment" 
+              cx="50%" 
+              cy="50%" 
+              r="15.91549430918954" 
+              fill="transparent" 
+              stroke="green" 
+              stroke-width="3" 
+              stroke-dasharray="10 100" 
+            >
+          </circle>
+        </svg>
+    </figure>
+    <!-- <script src="main.js" type="module"></script> -->
+</body>
+</html>

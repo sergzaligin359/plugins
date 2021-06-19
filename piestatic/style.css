@@ -1,0 +1,45 @@
+.canvas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    outline: 1px solid #000;
+    flex-direction: column;
+  }
+/*  circle {
+    fill: #ddd;
+    stroke: #0074d9;
+    stroke-width: 32;
+    stroke-dasharray: 0 100;
+    transition: stroke-dasharray .3s ease;
+  }*/
+
+  .pie1{
+    fill: #ddd;
+    stroke: red;
+    stroke-width: 32;
+    stroke-dasharray: 50 100;
+    transition: stroke-dasharray .3s ease;
+  }
+    .pie2{
+        fill: #ddd;
+    stroke: #0074d9;
+    stroke-width: 32;
+    stroke-dasharray: 60 100;
+    transition: stroke-dasharray .3s ease;
+  }
+    .pie3{
+    fill: #ddd;
+    stroke: green;
+    stroke-width: 32;
+    stroke-dasharray: 70 100;
+    transition: stroke-dasharray .3s ease;
+  }
+  svg {
+    margin: 0 auto;
+    transform: rotate(-90deg);
+  }
+  .chart{
+            margin: 0 auto;
+      max-width: 100%;
+  }
